@@ -13,6 +13,7 @@ import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
 import SettingsPage from "./pages/SettingsPage";
 import Auth from "./pages/Auth";
+import ExperienceDetail from "./pages/ExperienceDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/experience/:id" element={<ExperienceDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

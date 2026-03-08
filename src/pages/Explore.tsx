@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, Eye, ThumbsUp, Trophy, Briefcase, Code2, Mic2, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, Eye, ThumbsUp, Trophy, Briefcase, Code2, Mic2, GraduationCap, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";

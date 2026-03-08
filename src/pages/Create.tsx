@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Trophy, Briefcase, Code2, Mic2, ArrowLeft, Send } from "lucide-react";
+import { Trophy, Briefcase, Code2, Mic2, GraduationCap, ArrowLeft, Send } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,9 +16,10 @@ const templates = [
   { id: "interview" as const, icon: Briefcase, label: "Interview", description: "Document your interview journey", color: "text-blue-500" },
   { id: "project" as const, icon: Code2, label: "Project", description: "Showcase your project story", color: "text-emerald-500" },
   { id: "conference" as const, icon: Mic2, label: "Conference", description: "Share conference insights", color: "text-rose-500" },
+  { id: "exam" as const, icon: GraduationCap, label: "Exam", description: "Share exam experiences (TCS NQT, NPTEL, IELTS, etc.)", color: "text-violet-500" },
 ];
 
-type ExperienceType = "hackathon" | "interview" | "project" | "conference";
+type ExperienceType = "hackathon" | "interview" | "project" | "conference" | "exam";
 
 const Create = () => {
   const { user } = useAuth();
@@ -28,50 +28,24 @@ const Create = () => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [fields, setFields] = useState<Record<string, string>>({});
 
-  // Hackathon fields
-  const [teamSize, setTeamSize] = useState("");
-  const [duration, setDuration] = useState("");
-  const [hackTechStack, setHackTechStack] = useState("");
-  const [result, setResult] = useState("");
-  const [whatWentWell, setWhatWentWell] = useState("");
-  const [challenges, setChallenges] = useState("");
-  const [lessons, setLessons] = useState("");
-
-  // Interview fields
-  const [company, setCompany] = useState("");
-  const [role, setRole] = useState("");
-  const [rounds, setRounds] = useState("");
-  const [questions, setQuestions] = useState("");
-  const [outcome, setOutcome] = useState("");
-  const [preparation, setPreparation] = useState("");
-  const [tips, setTips] = useState("");
-
-  // Project fields
-  const [projTechStack, setProjTechStack] = useState("");
-  const [projDuration, setProjDuration] = useState("");
-  const [description, setDescription] = useState("");
-  const [projChallenges, setProjChallenges] = useState("");
-  const [projOutcome, setProjOutcome] = useState("");
-  const [projLink, setProjLink] = useState("");
-
-  // Conference fields
-  const [confName, setConfName] = useState("");
-  const [location, setLocation] = useState("");
-  const [talks, setTalks] = useState("");
-  const [networking, setNetworking] = useState("");
-  const [takeaways, setTakeaways] = useState("");
+  const setField = (key: string, value: string) => setFields((f) => ({ ...f, [key]: value }));
+  const f = (key: string) => fields[key] || "";
 
   const buildContent = () => {
+    const gh = f("github_link").trim() || undefined;
     switch (selected) {
       case "hackathon":
-        return { team_size: teamSize, duration, tech_stack: hackTechStack.split(",").map(s => s.trim()).filter(Boolean), result, what_went_well: whatWentWell, challenges, lessons };
+        return { description: f("description"), team_size: f("team_size"), duration: f("duration"), tech_stack: f("tech_stack").split(",").map(s => s.trim()).filter(Boolean), result: f("result"), what_went_well: f("what_went_well"), challenges: f("challenges"), lessons: f("lessons"), github_link: gh };
       case "interview":
-        return { company, role, rounds, questions, outcome, preparation, tips };
+        return { description: f("description"), company: f("company"), role: f("role"), rounds: f("rounds"), questions: f("questions"), outcome: f("outcome"), preparation: f("preparation"), tips: f("tips"), github_link: gh };
       case "project":
-        return { tech_stack: projTechStack.split(",").map(s => s.trim()).filter(Boolean), duration: projDuration, description, challenges: projChallenges, outcome: projOutcome, link: projLink };
+        return { description: f("description"), tech_stack: f("tech_stack").split(",").map(s => s.trim()).filter(Boolean), duration: f("duration"), challenges: f("challenges"), outcome: f("outcome"), link: f("link"), github_link: gh };
       case "conference":
-        return { name: confName, location, talks, networking, takeaways };
+        return { description: f("description"), name: f("name"), location: f("location"), talks: f("talks"), networking: f("networking"), takeaways: f("takeaways"), github_link: gh };
+      case "exam":
+        return { description: f("description"), exam_name: f("exam_name"), platform: f("platform"), duration: f("duration"), score: f("score"), preparation_strategy: f("preparation_strategy"), resources: f("resources"), tips: f("tips"), takeaways: f("takeaways"), github_link: gh };
       default:
         return {};
     }
@@ -84,19 +58,11 @@ const Create = () => {
     }
     setSubmitting(true);
     const { error } = await supabase.from("experiences").insert({
-      title,
-      type: selected,
-      content: buildContent(),
-      author_id: user.id,
-      difficulty: difficulty || null,
+      title, type: selected, content: buildContent(), author_id: user.id, difficulty: difficulty || null,
     });
     setSubmitting(false);
-    if (error) {
-      toast.error("Failed to create experience: " + error.message);
-    } else {
-      toast.success("Experience shared!");
-      navigate("/explore");
-    }
+    if (error) { toast.error("Failed to create experience: " + error.message); }
+    else { toast.success("Experience shared!"); navigate("/explore"); }
   };
 
   if (!user) {
@@ -118,7 +84,7 @@ const Create = () => {
       {!selected ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {templates.map((t) => (
-            <Card key={t.id} className="cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md card-glow" onClick={() => setSelected(t.id)}>
+            <Card key={t.id} className="cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md card-glow" onClick={() => { setSelected(t.id); setFields({}); }}>
               <CardContent className="flex items-start gap-4 p-5">
                 <div className={`rounded-lg bg-accent p-2.5 ${t.color}`}><t.icon className="h-5 w-5" /></div>
                 <div>
@@ -137,13 +103,8 @@ const Create = () => {
 
           <Card>
             <CardContent className="space-y-4 p-6">
-              <div className="space-y-1.5">
-                <Label>Title *</Label>
-                <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Give your experience a catchy title" />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label>Difficulty</Label>
+              <Field label="Title *"><Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Give your experience a catchy title" /></Field>
+              <Field label="Difficulty">
                 <Select value={difficulty} onValueChange={setDifficulty}>
                   <SelectTrigger><SelectValue placeholder="Select difficulty" /></SelectTrigger>
                   <SelectContent>
@@ -152,58 +113,18 @@ const Create = () => {
                     <SelectItem value="advanced">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </Field>
+              <Field label="Description"><Textarea value={f("description")} onChange={e => setField("description", e.target.value)} placeholder="Describe your experience..." rows={4} /></Field>
 
-              {selected === "hackathon" && (
-                <>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-1.5"><Label>Team Size</Label><Input value={teamSize} onChange={e => setTeamSize(e.target.value)} placeholder="e.g. 4" /></div>
-                    <div className="space-y-1.5"><Label>Duration</Label><Input value={duration} onChange={e => setDuration(e.target.value)} placeholder="e.g. 36 hours" /></div>
-                  </div>
-                  <div className="space-y-1.5"><Label>Tech Stack (comma-separated)</Label><Input value={hackTechStack} onChange={e => setHackTechStack(e.target.value)} placeholder="React, Python, TensorFlow" /></div>
-                  <div className="space-y-1.5"><Label>Result</Label><Input value={result} onChange={e => setResult(e.target.value)} placeholder="e.g. 1st Place" /></div>
-                  <div className="space-y-1.5"><Label>What Went Well</Label><Textarea value={whatWentWell} onChange={e => setWhatWentWell(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Challenges</Label><Textarea value={challenges} onChange={e => setChallenges(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Key Lessons</Label><Textarea value={lessons} onChange={e => setLessons(e.target.value)} rows={3} /></div>
-                </>
-              )}
+              {selected === "hackathon" && <HackathonFields f={f} setField={setField} />}
+              {selected === "interview" && <InterviewFields f={f} setField={setField} />}
+              {selected === "project" && <ProjectFields f={f} setField={setField} />}
+              {selected === "conference" && <ConferenceFields f={f} setField={setField} />}
+              {selected === "exam" && <ExamFields f={f} setField={setField} />}
 
-              {selected === "interview" && (
-                <>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-1.5"><Label>Company</Label><Input value={company} onChange={e => setCompany(e.target.value)} placeholder="e.g. Google" /></div>
-                    <div className="space-y-1.5"><Label>Role</Label><Input value={role} onChange={e => setRole(e.target.value)} placeholder="e.g. SWE L4" /></div>
-                  </div>
-                  <div className="space-y-1.5"><Label>Rounds</Label><Input value={rounds} onChange={e => setRounds(e.target.value)} placeholder="e.g. 5 rounds" /></div>
-                  <div className="space-y-1.5"><Label>Questions Asked</Label><Textarea value={questions} onChange={e => setQuestions(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Outcome</Label><Input value={outcome} onChange={e => setOutcome(e.target.value)} placeholder="e.g. Offer received" /></div>
-                  <div className="space-y-1.5"><Label>How You Prepared</Label><Textarea value={preparation} onChange={e => setPreparation(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Tips for Others</Label><Textarea value={tips} onChange={e => setTips(e.target.value)} rows={3} /></div>
-                </>
-              )}
-
-              {selected === "project" && (
-                <>
-                  <div className="space-y-1.5"><Label>Tech Stack (comma-separated)</Label><Input value={projTechStack} onChange={e => setProjTechStack(e.target.value)} placeholder="React, Node.js, PostgreSQL" /></div>
-                  <div className="space-y-1.5"><Label>Duration</Label><Input value={projDuration} onChange={e => setProjDuration(e.target.value)} placeholder="e.g. 3 months" /></div>
-                  <div className="space-y-1.5"><Label>Description</Label><Textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
-                  <div className="space-y-1.5"><Label>Challenges</Label><Textarea value={projChallenges} onChange={e => setProjChallenges(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Outcome</Label><Textarea value={projOutcome} onChange={e => setProjOutcome(e.target.value)} rows={2} /></div>
-                  <div className="space-y-1.5"><Label>Project Link</Label><Input value={projLink} onChange={e => setProjLink(e.target.value)} placeholder="https://..." /></div>
-                </>
-              )}
-
-              {selected === "conference" && (
-                <>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-1.5"><Label>Conference Name</Label><Input value={confName} onChange={e => setConfName(e.target.value)} placeholder="e.g. React Conf 2025" /></div>
-                    <div className="space-y-1.5"><Label>Location</Label><Input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. San Francisco, CA" /></div>
-                  </div>
-                  <div className="space-y-1.5"><Label>Best Talks / Sessions</Label><Textarea value={talks} onChange={e => setTalks(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Networking Highlights</Label><Textarea value={networking} onChange={e => setNetworking(e.target.value)} rows={3} /></div>
-                  <div className="space-y-1.5"><Label>Key Takeaways</Label><Textarea value={takeaways} onChange={e => setTakeaways(e.target.value)} rows={3} /></div>
-                </>
-              )}
+              <Field label="GitHub Repository Link (optional)">
+                <Input value={f("github_link")} onChange={e => setField("github_link", e.target.value)} placeholder="https://github.com/..." />
+              </Field>
 
               <Button onClick={handleSubmit} disabled={submitting || !title.trim()} className="w-full">
                 <Send className="mr-2 h-4 w-4" /> {submitting ? "Sharing..." : "Share Experience"}
@@ -215,5 +136,84 @@ const Create = () => {
     </div>
   );
 };
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return <div className="space-y-1.5"><Label>{label}</Label>{children}</div>;
+}
+
+function HackathonFields({ f, setField }: { f: (k: string) => string; setField: (k: string, v: string) => void }) {
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Team Size"><Input value={f("team_size")} onChange={e => setField("team_size", e.target.value)} placeholder="e.g. 4" /></Field>
+        <Field label="Duration"><Input value={f("duration")} onChange={e => setField("duration", e.target.value)} placeholder="e.g. 36 hours" /></Field>
+      </div>
+      <Field label="Tech Stack (comma-separated)"><Input value={f("tech_stack")} onChange={e => setField("tech_stack", e.target.value)} placeholder="React, Python, TensorFlow" /></Field>
+      <Field label="Result"><Input value={f("result")} onChange={e => setField("result", e.target.value)} placeholder="e.g. 1st Place" /></Field>
+      <Field label="What Went Well"><Textarea value={f("what_went_well")} onChange={e => setField("what_went_well", e.target.value)} rows={3} /></Field>
+      <Field label="Challenges"><Textarea value={f("challenges")} onChange={e => setField("challenges", e.target.value)} rows={3} /></Field>
+      <Field label="Key Lessons"><Textarea value={f("lessons")} onChange={e => setField("lessons", e.target.value)} rows={3} /></Field>
+    </>
+  );
+}
+
+function InterviewFields({ f, setField }: { f: (k: string) => string; setField: (k: string, v: string) => void }) {
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Company"><Input value={f("company")} onChange={e => setField("company", e.target.value)} placeholder="e.g. Google" /></Field>
+        <Field label="Role"><Input value={f("role")} onChange={e => setField("role", e.target.value)} placeholder="e.g. SWE L4" /></Field>
+      </div>
+      <Field label="Rounds"><Input value={f("rounds")} onChange={e => setField("rounds", e.target.value)} placeholder="e.g. 5 rounds" /></Field>
+      <Field label="Questions Asked"><Textarea value={f("questions")} onChange={e => setField("questions", e.target.value)} rows={3} /></Field>
+      <Field label="Outcome"><Input value={f("outcome")} onChange={e => setField("outcome", e.target.value)} placeholder="e.g. Offer received" /></Field>
+      <Field label="How You Prepared"><Textarea value={f("preparation")} onChange={e => setField("preparation", e.target.value)} rows={3} /></Field>
+      <Field label="Tips for Others"><Textarea value={f("tips")} onChange={e => setField("tips", e.target.value)} rows={3} /></Field>
+    </>
+  );
+}
+
+function ProjectFields({ f, setField }: { f: (k: string) => string; setField: (k: string, v: string) => void }) {
+  return (
+    <>
+      <Field label="Tech Stack (comma-separated)"><Input value={f("tech_stack")} onChange={e => setField("tech_stack", e.target.value)} placeholder="React, Node.js, PostgreSQL" /></Field>
+      <Field label="Duration"><Input value={f("duration")} onChange={e => setField("duration", e.target.value)} placeholder="e.g. 3 months" /></Field>
+      <Field label="Challenges"><Textarea value={f("challenges")} onChange={e => setField("challenges", e.target.value)} rows={3} /></Field>
+      <Field label="Outcome"><Textarea value={f("outcome")} onChange={e => setField("outcome", e.target.value)} rows={2} /></Field>
+      <Field label="Project Link"><Input value={f("link")} onChange={e => setField("link", e.target.value)} placeholder="https://..." /></Field>
+    </>
+  );
+}
+
+function ConferenceFields({ f, setField }: { f: (k: string) => string; setField: (k: string, v: string) => void }) {
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Conference Name"><Input value={f("name")} onChange={e => setField("name", e.target.value)} placeholder="e.g. React Conf 2025" /></Field>
+        <Field label="Location"><Input value={f("location")} onChange={e => setField("location", e.target.value)} placeholder="e.g. San Francisco, CA" /></Field>
+      </div>
+      <Field label="Best Talks / Sessions"><Textarea value={f("talks")} onChange={e => setField("talks", e.target.value)} rows={3} /></Field>
+      <Field label="Networking Highlights"><Textarea value={f("networking")} onChange={e => setField("networking", e.target.value)} rows={3} /></Field>
+      <Field label="Key Takeaways"><Textarea value={f("takeaways")} onChange={e => setField("takeaways", e.target.value)} rows={3} /></Field>
+    </>
+  );
+}
+
+function ExamFields({ f, setField }: { f: (k: string) => string; setField: (k: string, v: string) => void }) {
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Exam Name"><Input value={f("exam_name")} onChange={e => setField("exam_name", e.target.value)} placeholder="e.g. TCS NQT, NPTEL, IELTS" /></Field>
+        <Field label="Platform / Organization"><Input value={f("platform")} onChange={e => setField("platform", e.target.value)} placeholder="e.g. TCS iON, Swayam" /></Field>
+      </div>
+      <Field label="Duration"><Input value={f("duration")} onChange={e => setField("duration", e.target.value)} placeholder="e.g. 3 hours" /></Field>
+      <Field label="Score / Result"><Input value={f("score")} onChange={e => setField("score", e.target.value)} placeholder="e.g. 85/100, Band 7.5" /></Field>
+      <Field label="Preparation Strategy"><Textarea value={f("preparation_strategy")} onChange={e => setField("preparation_strategy", e.target.value)} rows={3} placeholder="How did you prepare?" /></Field>
+      <Field label="Resources Used"><Textarea value={f("resources")} onChange={e => setField("resources", e.target.value)} rows={3} placeholder="Books, websites, courses..." /></Field>
+      <Field label="Tips for Others"><Textarea value={f("tips")} onChange={e => setField("tips", e.target.value)} rows={3} /></Field>
+      <Field label="Key Takeaways"><Textarea value={f("takeaways")} onChange={e => setField("takeaways", e.target.value)} rows={3} /></Field>
+    </>
+  );
+}
 
 export default Create;

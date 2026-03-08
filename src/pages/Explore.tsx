@@ -67,7 +67,7 @@ const Explore = () => {
           <TabsTrigger value="hackathon">Hackathons</TabsTrigger>
           <TabsTrigger value="interview">Interviews</TabsTrigger>
           <TabsTrigger value="project">Projects</TabsTrigger>
-          <TabsTrigger value="conference">Conferences</TabsTrigger>
+          <TabsTrigger value="conference">Technical Events</TabsTrigger>
           <TabsTrigger value="exam">Exams</TabsTrigger>
         </TabsList>
       </Tabs>

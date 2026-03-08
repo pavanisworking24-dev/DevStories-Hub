@@ -15,7 +15,7 @@ const templates = [
   { id: "hackathon" as const, icon: Trophy, label: "Hackathon", description: "Share your hackathon experience", color: "text-amber-500" },
   { id: "interview" as const, icon: Briefcase, label: "Interview", description: "Document your interview journey", color: "text-blue-500" },
   { id: "project" as const, icon: Code2, label: "Project", description: "Showcase your project story", color: "text-emerald-500" },
-  { id: "conference" as const, icon: Mic2, label: "Conference", description: "Share conference insights", color: "text-rose-500" },
+  { id: "conference" as const, icon: Mic2, label: "Technical Event / Conference", description: "Share technical event & conference insights", color: "text-rose-500" },
   { id: "exam" as const, icon: GraduationCap, label: "Exam", description: "Share exam experiences (TCS NQT, NPTEL, IELTS, etc.)", color: "text-violet-500" },
 ];
 

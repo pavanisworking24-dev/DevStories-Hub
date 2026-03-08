@@ -7,7 +7,7 @@ const categories = [
   { icon: Trophy, label: "Hackathons", description: "Share your hackathon wins, struggles, and breakthroughs", color: "text-amber-500" },
   { icon: Briefcase, label: "Interviews", description: "Real interview experiences with questions and prep tips", color: "text-blue-500" },
   { icon: Code2, label: "Projects", description: "Document your project journey from idea to deployment", color: "text-emerald-500" },
-  { icon: Mic2, label: "Conferences", description: "Best talks, networking tips, and workshop insights", color: "text-rose-500" },
+  { icon: Mic2, label: "Technical Events & Conferences", description: "Best talks, networking tips, and workshop insights", color: "text-rose-500" },
 ];
 
 const Index = () => {

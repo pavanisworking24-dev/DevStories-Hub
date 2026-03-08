@@ -408,7 +408,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
-      experience_type: "hackathon" | "interview" | "project" | "conference"
+      experience_type:
+        | "hackathon"
+        | "interview"
+        | "project"
+        | "conference"
+        | "exam"
       verification_status: "pending" | "approved" | "rejected"
       vote_value: "up" | "down"
     }
@@ -539,7 +544,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
-      experience_type: ["hackathon", "interview", "project", "conference"],
+      experience_type: [
+        "hackathon",
+        "interview",
+        "project",
+        "conference",
+        "exam",
+      ],
       verification_status: ["pending", "approved", "rejected"],
       vote_value: ["up", "down"],
     },

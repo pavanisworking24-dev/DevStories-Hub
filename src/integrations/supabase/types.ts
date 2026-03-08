@@ -14,16 +14,403 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_summaries: {
+        Row: {
+          confidence_score: number | null
+          difficulty_level: string | null
+          experience_id: string
+          generated_at: string
+          id: string
+          key_lessons: Json
+          one_liner: string | null
+          preparation_tips: Json
+          time_investment: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          difficulty_level?: string | null
+          experience_id: string
+          generated_at?: string
+          id?: string
+          key_lessons?: Json
+          one_liner?: string | null
+          preparation_tips?: Json
+          time_investment?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          difficulty_level?: string | null
+          experience_id?: string
+          generated_at?: string
+          id?: string
+          key_lessons?: Json
+          one_liner?: string | null
+          preparation_tips?: Json
+          time_investment?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_summaries_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: true
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookmarks: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklists: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          items: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          items?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          items?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklists_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          content: string
+          created_at: string
+          experience_id: string
+          id: string
+          parent_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          experience_id: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          experience_id?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_tags: {
+        Row: {
+          experience_id: string
+          tag_id: string
+        }
+        Insert: {
+          experience_id: string
+          tag_id: string
+        }
+        Update: {
+          experience_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_tags_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiences: {
+        Row: {
+          author_id: string
+          content: Json
+          created_at: string
+          difficulty: string | null
+          helpful_count: number
+          id: string
+          search_vector: unknown
+          title: string
+          type: Database["public"]["Enums"]["experience_type"]
+          updated_at: string
+          verification_badge: string | null
+          verified: boolean
+          views: number
+        }
+        Insert: {
+          author_id: string
+          content?: Json
+          created_at?: string
+          difficulty?: string | null
+          helpful_count?: number
+          id?: string
+          search_vector?: unknown
+          title: string
+          type: Database["public"]["Enums"]["experience_type"]
+          updated_at?: string
+          verification_badge?: string | null
+          verified?: boolean
+          views?: number
+        }
+        Update: {
+          author_id?: string
+          content?: Json
+          created_at?: string
+          difficulty?: string | null
+          helpful_count?: number
+          id?: string
+          search_vector?: unknown
+          title?: string
+          type?: Database["public"]["Enums"]["experience_type"]
+          updated_at?: string
+          verification_badge?: string | null
+          verified?: boolean
+          views?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          college_company: string | null
+          created_at: string
+          id: string
+          impact_score: number
+          tech_stack: string[] | null
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          college_company?: string | null
+          created_at?: string
+          id?: string
+          impact_score?: number
+          tech_stack?: string[] | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          college_company?: string | null
+          created_at?: string
+          id?: string
+          impact_score?: number
+          tech_stack?: string[] | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verification_requests: {
+        Row: {
+          badge_type: string
+          created_at: string
+          experience_id: string
+          id: string
+          proof_url: string | null
+          reviewer_notes: string | null
+          status: Database["public"]["Enums"]["verification_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_type: string
+          created_at?: string
+          experience_id: string
+          id?: string
+          proof_url?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_type?: string
+          created_at?: string
+          experience_id?: string
+          id?: string
+          proof_url?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      votes: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          user_id: string
+          value: Database["public"]["Enums"]["vote_value"]
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          user_id: string
+          value: Database["public"]["Enums"]["vote_value"]
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          user_id?: string
+          value?: Database["public"]["Enums"]["vote_value"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      experience_type: "hackathon" | "interview" | "project" | "conference"
+      verification_status: "pending" | "approved" | "rejected"
+      vote_value: "up" | "down"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +537,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      experience_type: ["hackathon", "interview", "project", "conference"],
+      verification_status: ["pending", "approved", "rejected"],
+      vote_value: ["up", "down"],
+    },
   },
 } as const

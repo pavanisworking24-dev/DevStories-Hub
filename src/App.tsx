@@ -35,6 +35,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/experience/:id" element={<ExperienceDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

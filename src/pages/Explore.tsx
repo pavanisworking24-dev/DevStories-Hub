@@ -35,7 +35,7 @@ const Explore = () => {
   const fetchExperiences = async () => {
     setLoading(true);
     let query = supabase.from("experiences").select("*").order("created_at", { ascending: false });
-    if (tab !== "all") query = query.eq("type", tab);
+    if (tab !== "all") query = query.eq("type", tab as "hackathon" | "interview" | "project" | "conference");
     const { data, error } = await query;
     if (!error && data) setExperiences(data);
     setLoading(false);

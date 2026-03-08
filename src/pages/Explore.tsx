@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, Eye, ThumbsUp, Trophy, Briefcase, Code2, Mic2, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, Eye, ThumbsUp, Trophy, Briefcase, Code2, Mic2, GraduationCap, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,7 @@ const typeIcons: Record<string, any> = {
   interview: Briefcase,
   project: Code2,
   conference: Mic2,
+  exam: GraduationCap,
 };
 
 const typeColors: Record<string, string> = {
@@ -20,6 +21,7 @@ const typeColors: Record<string, string> = {
   interview: "text-blue-500",
   project: "text-emerald-500",
   conference: "text-rose-500",
+  exam: "text-violet-500",
 };
 
 const Explore = () => {
@@ -66,6 +68,7 @@ const Explore = () => {
           <TabsTrigger value="interview">Interviews</TabsTrigger>
           <TabsTrigger value="project">Projects</TabsTrigger>
           <TabsTrigger value="conference">Conferences</TabsTrigger>
+          <TabsTrigger value="exam">Exams</TabsTrigger>
         </TabsList>
       </Tabs>
 

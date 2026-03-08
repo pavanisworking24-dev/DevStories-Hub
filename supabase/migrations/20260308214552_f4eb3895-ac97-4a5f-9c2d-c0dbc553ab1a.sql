@@ -1,0 +1,1 @@
+ALTER TYPE public.experience_type ADD VALUE IF NOT EXISTS 'exam';

@@ -13,6 +13,7 @@ import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
 import SettingsPage from "./pages/SettingsPage";
 import Auth from "./pages/Auth";
+import ExperienceDetail from "./pages/ExperienceDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

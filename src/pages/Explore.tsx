@@ -13,6 +13,7 @@ const typeIcons: Record<string, any> = {
   interview: Briefcase,
   project: Code2,
   conference: Mic2,
+  exam: GraduationCap,
 };
 
 const typeColors: Record<string, string> = {
@@ -20,6 +21,7 @@ const typeColors: Record<string, string> = {
   interview: "text-blue-500",
   project: "text-emerald-500",
   conference: "text-rose-500",
+  exam: "text-violet-500",
 };
 
 const Explore = () => {

@@ -68,6 +68,7 @@ const Explore = () => {
           <TabsTrigger value="interview">Interviews</TabsTrigger>
           <TabsTrigger value="project">Projects</TabsTrigger>
           <TabsTrigger value="conference">Conferences</TabsTrigger>
+          <TabsTrigger value="exam">Exams</TabsTrigger>
         </TabsList>
       </Tabs>
 

@@ -1,7 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, PenSquare, Bot, Bookmark, User, Settings, LogIn, Code2 } from "lucide-react";
+import { Home, Compass, PenSquare, Bot, Bookmark, User, Settings, LogIn, LogOut, Code2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const navItems = [
   { to: "/", icon: Home, label: "Home" },
@@ -15,6 +17,7 @@ const navItems = [
 
 export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="flex h-full flex-col gap-2 p-4">
@@ -49,14 +52,29 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       <div className="flex flex-col gap-2 border-t pt-4">
         <ThemeToggle />
-        <Link
-          to="/auth"
-          onClick={onNavigate}
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
-        >
-          <LogIn className="h-4 w-4" />
-          Sign In
-        </Link>
+        {user ? (
+          <div className="flex items-center gap-3 px-3 py-2">
+            <Avatar className="h-7 w-7">
+              <AvatarImage src={user.user_metadata?.avatar_url || ""} />
+              <AvatarFallback className="text-xs">
+                {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="flex-1 truncate text-sm">{user.user_metadata?.full_name || user.email}</span>
+            <button onClick={signOut} className="text-muted-foreground hover:text-foreground">
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/auth"
+            onClick={onNavigate}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+          >
+            <LogIn className="h-4 w-4" />
+            Sign In
+          </Link>
+        )}
       </div>
     </div>
   );
